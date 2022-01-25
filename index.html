@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Modular Mapgen</title>
+        <meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="style.css" />
+		<script src="script.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	</head>
+	<body onload="clickLayer(4)">
+		<div class="wrapper">
+			<h1>Modular Map Generation</h1>
+			<section id="intro">
+				<h3>Intro</h3>
+				<p>Map generation is something that many games require, particularly when they want each iteration of a map to be unique. However, there aren't many tools and guides on map generation out there - and those that are, don't delve deeper than the basics. This is likely because map generation often needs to be tailor made for the particular game. Despite that, this project is an attempt to create a framework that makes it easier to define rules for a map and does the complicated parts itself. The generator currently works for grid-based 2D maps (horizontal or vertical), but 3D support can be expected in the future.</p>
+			</section>
+			<section id="procons">
+				<h3>Pros and Cons of Procedural map generation</h3>
+				<p>There are two typical approaches to randomized map generation. In <strong>constructive map generation</strong>, the map is fully constructed at the start. In <strong>procedural generation</strong>, the map is divided into chunks, and each chunk is only generated once the player gets close to them. <br>Both approaches have their own benefits:</p>
+				<div class="horizontal">
+				<div>
+				<h4>Constructive</h4>
+				<ul>
+					<li class="plus">Simple to understand and use</li>
+					<li class="minus">Generating has to be done at once, which will take a lot of time</li>
+					<li class="minus">Inefficient use of storage space as parts that the player never visits are still generated</li>
+				</ul>
+				</div>
+				<div>
+				<h4>Procedural</h4>
+				<ul>
+					<li class="plus">Can be used for maps of <i>infinite</i> size</li>
+					<li class="plus">Generation is done during gameplay, so no need to wait at the beginning</li>
+					<li class="minus">However, if the generator is inefficient it can disrupt the gameplay experience</li>
+					<li class="minus">Procedural generation has certain limitations that are difficult to bypass</li>
+				</ul>
+				</div>
+				</div>
+			</section>
+			<section id="process">
+				<h3>The process of map generation</h3>
+				<ol>
+					<li>Each layer or structure determines which structures it contains, as well as their bounding boxes.</li>
+					<li>Structures whose bounding boxes intersect with the chunk to be generated, are generated.</li>
+					<li>Each structure also generates an adhesive layer.</li>
+					<li>The structure is applied to the lower layer using the adhesive layer.</li>
+					<li>Once all of the layers are merged unto the canvas layer, that chunk can be used in game.</li>
+				</ol>
+			</section>
+			<section id="layers">
+				<h3>How layers interact with one another</h3>
+				<div class="horizontal" id="layer-box">
+				<div id="layer-images">
+					<div class="horizontal">
+						<div class="parallelogram" onclick="clickLayer(0)" id="playerpara"></div>
+						<p>Player</p>
+					</div>
+					<img src="dots.png" class="dots" alt="three dots">
+					<div class="horizontal">
+						<div class="parallelogram" onclick="clickLayer(1)" id="upperpara"></div>
+						<p>Upper</p>
+					</div>
+					<div class="horizontal">
+						<div class="parallelogram" onclick="clickLayer(2)" id="adhesivepara"></div>
+						<p>Adhesive</p>
+					</div>
+					<div class="horizontal">
+						<div class="parallelogram" onclick="clickLayer(3)" id="lowerpara"></div>
+						<p>Lower</p>
+					</div>
+					<img src="dots.png" class="dots" alt="three dots">
+					<div class="horizontal">
+						<div class="parallelogram" onclick="clickLayer(4)" id="canvaspara"></div>
+						<p>Canvas</p>
+					</div>
+				</div>
+				<div id="layer-articles">
+					<article id="player">
+						<h4>Player layer</h4>
+						<p>A special layer that records blocks altered by the player. This minimizes the storage space needed for a map, as only chunks the player has changed have to be saved.</p>
+					</article>
+					<article id="upper">
+						<h4>Upper layer</h4>
+						<p>This layer first generates itself, then its own upper layers, and finally is applied to the lower layer.</p>
+					</article>
+					<article id="adhesive">
+						<h4>Adhesive layer</h4>
+						<p>This layer contains the rules for how to merge the two layers together, for example, an empty tile on the upper layer can either be filled in by the tile in the lower layer, or replace it.</p>
+					</article>
+					<article id="lower">
+						<h4>Lower layer</h4>
+						<p>The lower layer contains information about the structures it contains, and calls the creation code of the upper layers in specific coordinates if necessary.</p>
+					</article>
+					<article id="canvas">
+						<h4>Canvas</h4>
+						<p>The base layer that everything is collapsed unto. Only the topmost cell is used, so the generational layers have no effect on the gameplay.</p>
+					</article>
+				</div>
+				</div>
+			</section>
+			<section id="feedback">
+				<h3>Feedback</h3>
+				<p>Feedback or questions? Use the form below!</p>
+				<form class="vertical" target="_blank" name="feedback" action="https://www.w3schools.com/action_page.php" onsubmit="return validateFeedback()" method="post">
+					<div class="vertical" id="titlewrap">
+					<div class="horizontal">
+					<label for="title">Title/Summary:</label>
+					<input type="text" id="title" name="title"></input>
+					</div>
+					
+					</div>
+					<div class="horizontal">
+					<div class="vertical" id="emailwrap">
+					<div class="horizontal">
+					<label for="email">E-mail address (optional)</label>
+					<input type="text" id="email" name="email"></input>
+					</div>
+					</div>
+					<div class="vertical" id="errorwrap">
+					<div class="horizontal">
+					<label for="error">Error code (optional)</label>
+					<input type="number" id="error" name="error"></input>
+					</div>
+					</div>
+					</div>
+					<textarea id="desc"	name="desc">Describe the details here</textarea>
+					<input type="submit" value="Submit">
+				</form>
+			</section>
+		</div>
+	</body>
+</html>
